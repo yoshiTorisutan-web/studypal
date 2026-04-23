@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPal | Plateforme d'apprentissage personnel</title>
+  <meta
+    name="description"
+    content="StudyPal centralise flashcards, quiz, temps d'étude, objectifs, statistiques de mémorisation et mode révision avant examen."
+  >
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-noise"></div>
+  <div class="page-shell">
+    <header class="hero reveal">
+      <div class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark">S</div>
+          <div>
+            <p class="eyebrow">Plateforme d'apprentissage personnel</p>
+            <h1>StudyPal</h1>
+          </div>
+        </div>
+        <nav class="quick-nav" aria-label="Navigation rapide">
+          <button type="button" class="nav-chip" data-scroll-to="flashcards">Flashcards</button>
+          <button type="button" class="nav-chip" data-scroll-to="quiz">Quiz</button>
+          <button type="button" class="nav-chip" data-scroll-to="study">Temps</button>
+          <button type="button" class="nav-chip" data-scroll-to="revision">Examen</button>
+        </nav>
+      </div>
+
+      <div class="hero-grid">
+        <section class="hero-copy">
+          <p class="eyebrow">Réviser avec méthode</p>
+          <h2>Un cockpit personnel pour apprendre, retenir et arriver prêt le jour J.</h2>
+          <p class="hero-text">
+            Construis tes flashcards, révise avec répétition espacée, lance des quiz ciblés,
+            mesure ton temps d'étude et active un sprint final avant l'examen.
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="button button-primary" data-scroll-to="flashcards">Commencer la révision</button>
+            <button type="button" class="button button-secondary" data-scroll-to="revision">Passer en mode examen</button>
+          </div>
+          <div class="hero-tags">
+            <span>Répétition espacée</span>
+            <span>Scoring en direct</span>
+            <span>Objectifs mesurables</span>
+            <span>Statistiques de mémorisation</span>
+          </div>
+        </section>
+
+        <aside class="hero-panel panel glow-panel">
+          <div class="ring-card">
+            <div class="progress-ring" id="heroRing">
+              <div class="progress-ring__center">
+                <strong id="heroMemoryPercent">0%</strong>
+                <span>Mémorisation</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-panel-grid">
+            <article class="mini-metric">
+              <span id="heroDueCount">0</span>
+              <small>cartes à revoir</small>
+            </article>
+            <article class="mini-metric">
+              <span id="heroStudyToday">0 min</span>
+              <small>étudiées aujourd'hui</small>
+            </article>
+            <article class="mini-metric">
+              <span id="heroBestScore">0%</span>
+              <small>meilleur score quiz</small>
+            </article>
+            <article class="mini-metric">
+              <span id="heroExamCountdown">-</span>
+              <small>avant l'examen</small>
+            </article>
+          </div>
+          <p class="hero-insight" id="heroInsight">
+            Ton tableau de bord se remplit au fur et à mesure de tes révisions.
+          </p>
+        </aside>
+      </div>
+    </header>
+
+    <main class="content-grid">
+      <section id="overview" class="panel panel-wide reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Tableau de bord</p>
+            <h3>Vue d'ensemble</h3>
+          </div>
+          <p class="section-note" id="currentDateLabel"></p>
+        </div>
+
+        <div class="overview-stats">
+          <article class="metric-card">
+            <span class="metric-label">Cartes actives</span>
+            <strong id="cardsTotalStat">0</strong>
+            <small>base de révision disponible</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">À revoir maintenant</span>
+            <strong id="dueTodayStat">0</strong>
+            <small>priorités du jour</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Mémorisation</span>
+            <strong id="memoryRateStat">0%</strong>
+            <small>taux global de rappel</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Temps aujourd'hui</span>
+            <strong id="studyTodayStat">0 min</strong>
+            <small>sessions enregistrées</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Objectifs atteints</span>
+            <strong id="goalsDoneStat">0</strong>
+            <small>sur l'ensemble en cours</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Examen</span>
+            <strong id="daysLeftStat">-</strong>
+            <small>compte à rebours actif</small>
+          </article>
+        </div>
+
+        <div class="overview-columns">
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Performance par matière</h4>
+              <span>mémorisation et pression de révision</span>
+            </div>
+            <div id="memoryBars" class="bars-stack"></div>
+          </article>
+
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Plan du jour</h4>
+              <span>actions recommandées</span>
+            </div>
+            <div id="dailyPlan" class="checklist"></div>
+          </article>
+
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Répartition de maîtrise</h4>
+              <span>nouveau, en cours, solide</span>
+            </div>
+            <div id="masteryGrid" class="mastery-grid"></div>
+          </article>
+        </div>
+
+        <div class="utility-grid">
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Succès & habitudes</h4>
+              <span>jalons débloqués automatiquement</span>
+            </div>
+            <div id="achievementList" class="checklist"></div>
+          </article>
+
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Sauvegarde StudyPal</h4>
+              <span>export, import, réinitialisation</span>
+            </div>
+            <div class="action-cluster">
+              <button type="button" id="exportDataBtn" class="button button-secondary">Exporter mes données</button>
+              <button type="button" id="importDataBtn" class="button button-secondary">Importer un JSON</button>
+              <button type="button" id="resetDemoBtn" class="button ghost-button">Réinitialiser la démo</button>
+            </div>
+            <p id="dataStatus" class="status-inline">Les données restent sauvegardées localement dans le navigateur.</p>
+            <input id="importDataInput" class="hidden" type="file" accept="application/json">
+          </article>
+        </div>
+      </section>
+
+      <section id="flashcards" class="panel reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Flashcards</p>
+            <h3>Créer, réviser, faire progresser</h3>
+          </div>
+          <span class="section-note" id="focusModeLabel">Mode standard</span>
+        </div>
+
+        <div class="module-grid split">
+          <form id="cardForm" class="stack-form">
+            <h4 id="cardFormTitle">Nouvelle flashcard</h4>
+            <label>
+              Question
+              <textarea id="cardQuestion" name="question" rows="4" placeholder="Ex. Quelle est la fonction principale des mitochondries ?" required></textarea>
+            </label>
+            <label>
+              Réponse
+              <textarea id="cardAnswer" name="answer" rows="4" placeholder="Ex. Produire de l'énergie sous forme d'ATP." required></textarea>
+            </label>
+            <label>
+              Matière
+              <input id="cardCategory" name="category" type="text" placeholder="Biologie, Histoire, Maths..." required>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="button button-primary">
+                <span id="cardSubmitLabel">Ajouter à la bibliothèque</span>
+              </button>
+              <button type="button" id="cardEditCancelBtn" class="button ghost-button hidden">Annuler l'édition</button>
+            </div>
+          </form>
+
+          <div class="review-station">
+            <div class="review-toolbar">
+              <div>
+                <span class="metric-label">File de révision</span>
+                <strong id="reviewQueueCount">0 carte</strong>
+              </div>
+              <div>
+                <span class="metric-label">Prochaine échéance</span>
+                <strong id="nextReviewLabel">-</strong>
+              </div>
+            </div>
+
+            <article id="reviewCard" class="flip-card" aria-live="polite">
+              <div class="flip-card__inner">
+                <div class="flip-face flip-face--front">
+                  <span class="stack-badge" id="reviewCategory">Matière</span>
+                  <h4>Question</h4>
+                  <p id="reviewQuestion">Clique sur la carte pour voir la réponse.</p>
+                  <small id="reviewStrength">Force mémoire: 0%</small>
+                </div>
+                <div class="flip-face flip-face--back">
+                  <span class="stack-badge stack-badge--secondary">Réponse</span>
+                  <p id="reviewAnswer">La réponse apparaîtra ici.</p>
+                  <small>Évalue ton rappel pour programmer la prochaine révision.</small>
+                </div>
+              </div>
+            </article>
+
+            <div class="review-actions">
+              <button type="button" class="button tone-danger" data-review-rate="again">À revoir</button>
+              <button type="button" class="button tone-warning" data-review-rate="hard">Difficile</button>
+              <button type="button" class="button tone-success" data-review-rate="good">Correct</button>
+              <button type="button" class="button tone-calm" data-review-rate="easy">Maîtrisé</button>
+            </div>
+
+            <div class="stack-list-box">
+              <div class="subpanel-head">
+                <h4>Cartes prioritaires</h4>
+                <span>clic pour forcer une carte</span>
+              </div>
+              <div id="dueDeckList" class="stack-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="library-panel">
+          <div class="subpanel-head">
+            <h4>Bibliothèque</h4>
+            <span>aperçu complet des cartes</span>
+          </div>
+          <div class="library-toolbar">
+            <label>
+              Recherche
+              <input id="cardSearch" type="search" placeholder="Question, réponse ou matière">
+            </label>
+            <label>
+              Matière
+              <select id="cardFilterCategory"></select>
+            </label>
+            <label>
+              Statut
+              <select id="cardFilterStatus">
+                <option value="all">Tous</option>
+                <option value="due">À revoir</option>
+                <option value="weak">Fragiles</option>
+                <option value="new">Nouvelles</option>
+                <option value="strong">Solides</option>
+              </select>
+            </label>
+            <label>
+              Tri
+              <select id="cardSort">
+                <option value="priority">Priorité</option>
+                <option value="nextReview">Prochaine révision</option>
+                <option value="memoryDesc">Mémoire forte</option>
+                <option value="memoryAsc">Mémoire faible</option>
+                <option value="category">Matière</option>
+              </select>
+            </label>
+          </div>
+          <div id="cardLibrary" class="library-grid"></div>
+        </div>
+      </section>
+
+      <section id="quiz" class="panel reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Quiz interactifs</p>
+            <h3>Mesurer la compréhension en conditions rapides</h3>
+          </div>
+          <span class="section-note">Scoring immédiat + historique des erreurs</span>
+        </div>
+
+        <div class="quiz-toolbar">
+          <label>
+            Mode
+            <select id="quizMode">
+              <option value="mixed">Mixte</option>
+              <option value="exam">Révision avant examen</option>
+              <option value="mistakes">Erreurs fréquentes</option>
+            </select>
+          </label>
+          <label>
+            Matière
+            <select id="quizCategoryFilter"></select>
+          </label>
+          <label>
+            Questions
+            <select id="quizQuestionCount">
+              <option value="3">3</option>
+              <option value="5" selected>5</option>
+              <option value="7">7</option>
+              <option value="10">10</option>
+            </select>
+          </label>
+          <button type="button" id="startQuizBtn" class="button button-primary">Lancer un quiz</button>
+          <button type="button" id="retryMistakesBtn" class="button button-secondary">Rejouer mes erreurs</button>
+        </div>
+
+        <div class="quiz-shell">
+          <div class="quiz-status">
+            <div class="progress-track">
+              <span id="quizProgressBar"></span>
+            </div>
+            <div class="status-row">
+              <strong id="quizProgressLabel">Prêt à démarrer</strong>
+              <span id="quizScoreLabel">Score: 0</span>
+              <span id="quizTimerLabel">Temps: 00:00</span>
+            </div>
+          </div>
+
+          <article class="quiz-card">
+            <p class="quiz-category" id="quizCategory">Quiz StudyPal</p>
+            <h4 id="quizQuestion">Choisis un mode et lance une série pour commencer.</h4>
+            <div id="quizOptions" class="quiz-options"></div>
+            <div id="quizExplanation" class="quiz-explanation"></div>
+            <button type="button" id="quizNextBtn" class="button button-secondary hidden">Question suivante</button>
+          </article>
+
+          <aside id="quizSummary" class="quiz-summary"></aside>
+        </div>
+      </section>
+
+      <section id="study" class="panel reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Suivi du temps</p>
+            <h3>Chronométrer l'effort d'étude</h3>
+          </div>
+          <span class="section-note">Sessions enregistrées automatiquement</span>
+        </div>
+
+        <div class="module-grid split">
+          <div class="timer-card">
+            <div class="progress-ring timer-ring" id="timerRing">
+              <div class="progress-ring__center">
+                <strong id="timerDisplay">00:00:00</strong>
+                <span id="timerTargetLabel">Objectif: 45 min</span>
+              </div>
+            </div>
+
+            <div class="preset-row" aria-label="Objectifs de durée">
+              <button type="button" class="pill-button is-active" data-target-minutes="25">25 min</button>
+              <button type="button" class="pill-button" data-target-minutes="45">45 min</button>
+              <button type="button" class="pill-button" data-target-minutes="60">60 min</button>
+              <button type="button" class="pill-button" data-target-minutes="90">90 min</button>
+            </div>
+
+            <label>
+              Type de session
+              <select id="timerMode">
+                <option value="Lecture active">Lecture active</option>
+                <option value="Flashcards">Flashcards</option>
+                <option value="Quiz">Quiz</option>
+                <option value="Révision examen">Révision examen</option>
+              </select>
+            </label>
+
+            <label>
+              Focus de la session
+              <input id="timerNote" type="text" placeholder="Ex. Revoir les notions faibles du chapitre 4">
+            </label>
+
+            <div class="timer-actions">
+              <button type="button" id="startTimerBtn" class="button button-primary">Démarrer</button>
+              <button type="button" id="pauseTimerBtn" class="button button-secondary">Pause</button>
+              <button type="button" id="saveSessionBtn" class="button tone-success">Enregistrer</button>
+              <button type="button" id="resetTimerBtn" class="button ghost-button">Réinitialiser</button>
+            </div>
+
+            <p id="timerProgressLabel" class="helper-text">Aucune session en cours.</p>
+          </div>
+
+          <div class="study-summary">
+            <div id="studyTotals" class="overview-stats compact"></div>
+            <div class="stack-list-box">
+              <div class="subpanel-head">
+                <h4>Dernières sessions</h4>
+                <span>journal d'étude</span>
+              </div>
+              <div id="sessionList" class="session-list"></div>
+            </div>
+            <div class="stack-list-box">
+              <div class="subpanel-head">
+                <h4>Rythme sur 7 jours</h4>
+                <span>charge récente</span>
+              </div>
+              <div id="studyTrend" class="bars-stack"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="goals" class="panel reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Objectifs</p>
+            <h3>Suivre les apprentissages à atteindre</h3>
+          </div>
+          <span class="section-note">Progression incrémentale</span>
+        </div>
+
+        <div class="module-grid split">
+          <form id="goalForm" class="stack-form">
+            <h4>Nouvel objectif</h4>
+            <label>
+              Intitulé
+              <input id="goalTitle" name="title" type="text" placeholder="Ex. Maîtriser le chapitre 3" required>
+            </label>
+            <label>
+              Matière
+              <input id="goalCategory" name="category" type="text" placeholder="Biologie, Droit..." required>
+            </label>
+            <div class="form-row">
+              <label>
+                Progression actuelle
+                <input id="goalCurrent" name="current" type="number" min="0" value="0" required>
+              </label>
+              <label>
+                Cible
+                <input id="goalTarget" name="target" type="number" min="1" value="10" required>
+              </label>
+            </div>
+            <label>
+              Date cible
+              <input id="goalDeadline" name="deadline" type="date" required>
+            </label>
+            <button type="submit" class="button button-primary">Ajouter l'objectif</button>
+          </form>
+
+          <div class="goal-column">
+            <div id="goalProgressSummary" class="goal-summary"></div>
+            <div id="goalList" class="goal-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="revision" class="panel panel-wide accent-panel reveal">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Mode révision avant examen</p>
+            <h3>Concentrer l'effort sur ce qui compte le plus</h3>
+          </div>
+          <button type="button" id="toggleRevisionBtn" class="button button-secondary">Activer le mode révision</button>
+        </div>
+
+        <form id="examForm" class="exam-form">
+          <label>
+            Examen
+            <input id="examTitle" name="title" type="text" placeholder="Ex. Partiel de biologie cellulaire" required>
+          </label>
+          <label>
+            Date
+            <input id="examDate" name="date" type="date" required>
+          </label>
+          <label>
+            Score visé
+            <input id="examTarget" name="target" type="number" min="1" max="100" value="85" required>
+          </label>
+          <button type="submit" class="button button-primary">Mettre à jour le plan</button>
+        </form>
+
+        <div class="overview-stats">
+          <article class="metric-card">
+            <span class="metric-label">Compte à rebours</span>
+            <strong id="revisionCountdown">-</strong>
+            <small id="revisionUrgency">Ajoute une date d'examen.</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Charge quotidienne conseillée</span>
+            <strong id="revisionMinutes">0 min/jour</strong>
+            <small>estimation dynamique</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Questions à sécuriser</span>
+            <strong id="revisionWeakPoints">0</strong>
+            <small>cartes faibles + erreurs de quiz</small>
+          </article>
+        </div>
+
+        <div class="overview-columns">
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Checklist d'examen</h4>
+              <span>ordre de priorité</span>
+            </div>
+            <div id="examChecklist" class="checklist"></div>
+          </article>
+
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Paquet de révision</h4>
+              <span>cartes et notions à traiter</span>
+            </div>
+            <div id="examFocusDeck" class="stack-list"></div>
+          </article>
+
+          <article class="subpanel">
+            <div class="subpanel-head">
+              <h4>Cap visé</h4>
+              <span>lecture rapide de la situation</span>
+            </div>
+            <div id="revisionAdvice" class="revision-advice"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <noscript>Cette application a besoin de JavaScript pour fonctionner.</noscript>
+  <script src="script.js"></script>
+</body>
+</html>
