@@ -36,6 +36,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Aptos", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--ink);
   background:
     radial-gradient(circle at top left, rgba(219, 111, 79, 0.18), transparent 28rem),
@@ -67,11 +69,88 @@ textarea {
   opacity: 0.45;
 }
 
-.page-shell {
+.app-shell {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(244, 237, 227, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(33, 46, 38, 0.1);
+  padding: 0.6rem 1.5rem;
+}
+
+.app-header .topbar {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.8rem 0 3rem;
+}
+
+.tab-panel {
   width: min(1280px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 1.8rem 0 5rem;
+  display: grid;
+  gap: 2rem;
+  animation: riseIn 280ms ease both;
+}
+
+.tab-panel.hidden {
+  display: none;
+}
+
+.tab-panel .hero-grid {
+  margin-top: 0;
+}
+
+.bottom-nav {
+  display: none;
+}
+
+.bnav-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18rem;
+  padding: 0.4rem 0.6rem;
+  min-width: 3rem;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.bnav-btn svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  stroke-width: 1.8;
+}
+
+.bnav-btn.is-active {
+  color: var(--accent);
+}
+
+.bnav-btn .tab-badge {
+  position: absolute;
+  top: 0.1rem;
+  left: calc(50% + 0.2rem);
 }
 
 .hero,
@@ -103,8 +182,12 @@ textarea {
   gap: 1rem;
 }
 
+.subpanel-head {
+  margin-bottom: 1rem;
+}
+
 .section-head {
-  margin-bottom: 0.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .status-row {
@@ -166,13 +249,19 @@ h4 {
   font-size: 1rem;
 }
 
-.quick-nav {
+.tab-nav {
   display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 0.2rem;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.nav-chip,
+.tab-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn,
 .pill-button,
 .button {
   border: 0;
@@ -180,15 +269,44 @@ h4 {
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
 }
 
-.nav-chip {
-  padding: 0.5rem 0.9rem;
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.65);
-  color: var(--ink);
-  font-size: 0.88rem;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.nav-chip:hover,
+.tab-btn.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tab-btn:hover:not(.is-active) {
+  background: rgba(13, 121, 109, 0.1);
+  color: var(--ink);
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--warm);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .pill-button:hover,
 .button:hover {
   transform: translateY(-2px);
@@ -318,6 +436,7 @@ h4 {
 .hero-panel-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 .mini-metric {
@@ -342,8 +461,9 @@ h4 {
 }
 
 .hero-insight {
-  margin: 1rem 0 0;
-  line-height: 1.6;
+  margin: 1.25rem 0 0;
+  line-height: 1.7;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -354,19 +474,19 @@ h4 {
 }
 
 .panel {
-  padding: 1.75rem;
+  padding: 2rem;
   border-radius: 32px;
 }
 
 .panel-wide {
-  padding: 2rem;
+  padding: 2.25rem;
 }
 
 .overview-stats {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1.25rem;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
 }
 
 .overview-stats.compact {
@@ -375,9 +495,9 @@ h4 {
 }
 
 .metric-card {
-  padding: 1.25rem;
+  padding: 1.4rem;
   display: grid;
-  gap: 0.45rem;
+  gap: 0.6rem;
 }
 
 .metric-card strong {
@@ -396,14 +516,14 @@ h4 {
 .module-grid {
   display: grid;
   gap: 1.5rem;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
 }
 
 .utility-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
 
 .overview-columns {
@@ -424,7 +544,7 @@ h4 {
 .goal-summary,
 .goal-item,
 .library-item {
-  padding: 1.35rem;
+  padding: 1.6rem;
 }
 
 .bars-stack,
@@ -434,12 +554,12 @@ h4 {
 .goal-list,
 .revision-advice {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .bar-row {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.6rem;
 }
 
 .bar-caption {
@@ -475,7 +595,7 @@ h4 {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem 0.95rem;
+  padding: 1rem 1.1rem;
   border-radius: 16px;
   background: rgba(13, 121, 109, 0.06);
 }
@@ -495,7 +615,7 @@ h4 {
 }
 
 .mastery-card {
-  padding: 1.2rem;
+  padding: 1.4rem;
   border-radius: 18px;
   background: rgba(219, 111, 79, 0.08);
 }
@@ -503,13 +623,13 @@ h4 {
 .mastery-card strong {
   display: block;
   font-size: 1.35rem;
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
 }
 
 .stack-form,
 .exam-form {
   display: grid;
-  gap: 1.1rem;
+  gap: 1.4rem;
 }
 
 .stack-form > button,
@@ -534,7 +654,7 @@ h4 {
 
 label {
   display: grid;
-  gap: 0.55rem;
+  gap: 0.6rem;
   color: var(--ink);
   font-size: 0.9rem;
   font-weight: 500;
@@ -609,7 +729,7 @@ textarea {
 }
 
 .review-toolbar {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .flip-card {
@@ -636,8 +756,8 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.3rem;
+  gap: 1.25rem;
+  padding: 1.6rem;
   border-radius: 24px;
   backface-visibility: hidden;
   background:
@@ -669,14 +789,14 @@ textarea {
 
 .stack-list-box,
 .library-panel {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .library-toolbar {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1.35rem 0;
+  gap: 1.25rem;
+  margin: 1.75rem 0;
 }
 
 .stack-item,
@@ -716,7 +836,7 @@ textarea {
 }
 
 .quiz-toolbar {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   align-items: end;
   flex-wrap: wrap;
 }
@@ -730,7 +850,7 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.85fr);
   gap: 1.5rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .quiz-status {
@@ -744,12 +864,12 @@ textarea {
 
 .quiz-card {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .quiz-options {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.9rem;
 }
 
 .quiz-option {
@@ -773,19 +893,19 @@ textarea {
 
 .quiz-explanation {
   min-height: 3.5rem;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   border-radius: 18px;
   background: rgba(13, 121, 109, 0.06);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .quiz-summary {
   display: grid;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .summary-block {
-  padding: 0.9rem 1rem;
+  padding: 1.1rem 1.25rem;
   border-radius: 16px;
   background: rgba(219, 111, 79, 0.08);
 }
@@ -819,12 +939,12 @@ textarea {
 
 .study-summary {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .goal-column {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .goal-summary {
@@ -866,7 +986,8 @@ textarea {
 }
 
 .revision-advice {
-  line-height: 1.7;
+  line-height: 1.8;
+  font-size: 0.95rem;
 }
 
 .reveal {
@@ -910,19 +1031,76 @@ textarea {
   }
 }
 
-@media (max-width: 760px) {
-  .page-shell {
-    width: min(100% - 1rem, 100%);
-    padding-bottom: 2rem;
+@media (max-width: 1120px) and (min-width: 761px) {
+  .tab-nav {
+    gap: 0.1rem;
   }
 
+  .tab-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 760px) {
+  /* App header */
+  .app-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .app-header .topbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .app-header .eyebrow {
+    display: none;
+  }
+
+  .app-header h1 {
+    font-size: 1.15rem;
+  }
+
+  .brand-mark {
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+  }
+
+  /* Hide desktop tabs, show bottom nav */
+  .tab-nav {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: rgba(255, 250, 242, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(33, 46, 38, 0.1);
+    padding: 0.35rem 0 calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
+    justify-content: space-around;
+  }
+
+  /* Extra padding so content doesn't hide behind bottom nav */
+  .tab-content {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Panels */
   .hero,
-  .panel {
+  .panel,
+  .panel-wide {
     border-radius: 24px;
     padding: 1.35rem;
   }
 
-  .topbar,
   .section-head,
   .quiz-toolbar,
   .review-toolbar,
@@ -932,13 +1110,24 @@ textarea {
     align-items: stretch;
   }
 
+  .subpanel-head {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
   .overview-stats,
-  .overview-stats.compact,
+  .overview-stats.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .mastery-grid,
-  .review-actions,
-  .preset-row,
   .exam-form {
     grid-template-columns: 1fr;
+  }
+
+  .review-actions,
+  .preset-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .library-toolbar,
@@ -946,13 +1135,7 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .hero-panel-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .quick-nav,
-  .hero-actions,
-  .goal-actions {
+  .hero-actions {
     flex-direction: column;
   }
 

@@ -1436,6 +1436,29 @@ function getRevisionAdvice(daysLeft, recommendedMinutes) {
   return `Maintiens un rythme de ${recommendedMinutes} minutes par jour et déclenche un quiz ciblé dès qu'une matière descend sous 70% de mémorisation.`;
 }
 
+function switchTab(name) {
+  document.querySelectorAll(".tab-panel").forEach((p) => p.classList.add("hidden"));
+  const panel = document.getElementById("tab-" + name);
+  if (panel) {
+    panel.classList.remove("hidden");
+  }
+  document.querySelectorAll(".tab-btn, .bnav-btn").forEach((b) => {
+    b.classList.toggle("is-active", b.dataset.tab === name);
+  });
+  document.querySelector(".tab-content")?.scrollTo({ top: 0 });
+}
+
+function updateDueBadge() {
+  const now = new Date();
+  const count = state.cards.filter((c) => new Date(c.nextReview) <= now).length;
+  ["dueTabBadge", "dueBadgeMobile"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = count > 99 ? "99+" : String(count);
+    el.classList.toggle("hidden", count === 0);
+  });
+}
+
 function renderAll() {
   renderOverview();
   renderFlashcards();
@@ -1443,6 +1466,7 @@ function renderAll() {
   renderTimer();
   renderGoals();
   renderRevision();
+  updateDueBadge();
 }
 
 function describeQuizMode(mode) {
@@ -2017,10 +2041,15 @@ function toggleRevisionMode() {
 }
 
 function bindEvents() {
-  document.querySelectorAll("[data-scroll-to]").forEach((button) => {
+  document.querySelectorAll("[data-tab-to]").forEach((button) => {
     button.addEventListener("click", () => {
-      const target = document.getElementById(button.dataset.scrollTo);
-      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      switchTab(button.dataset.tabTo);
+    });
+  });
+
+  document.querySelectorAll(".tab-btn, .bnav-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.tab);
     });
   });
 
@@ -2093,7 +2122,7 @@ function bindEvents() {
     const button = event.target.closest("[data-review-select]");
     if (button) {
       setCurrentReviewCard(button.dataset.reviewSelect);
-      document.getElementById("flashcards").scrollIntoView({ behavior: "smooth", block: "start" });
+      switchTab("flashcards");
     }
   });
 
